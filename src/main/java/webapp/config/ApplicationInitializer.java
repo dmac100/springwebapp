@@ -1,4 +1,4 @@
-package config;
+package webapp.config;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletRegistration;
