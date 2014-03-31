@@ -1,7 +1,6 @@
 package webapp.service;
 
-import java.util.List;
-
+import org.mindrot.jbcrypt.BCrypt;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -14,11 +13,19 @@ import webapp.domain.User;
 public class UserService {
 	@Autowired UserDao userDao;
 	
-	public void register(String username, String password) {
-		userDao.saveUser(new User(0, username, password));
-	}
-
-	public List<User> getAllUsers() {
-		return userDao.getUsers();
-	}
+ 	public void register(String username, String password) {
+		if(userDao.getUser(username) != null) {
+			throw new AlreadyExistsException("Username already exists");
+		}
+		
+		String hashed = BCrypt.hashpw(password, BCrypt.gensalt());
+		
+		userDao.saveUser(new User(username, hashed));
+ 	}
+ 
+	public boolean login(String username, String password) {
+		User user = userDao.getUser(username);
+		
+		return (user != null) && BCrypt.checkpw(password, user.getPassword());
+ 	}
 }

@@ -22,4 +22,11 @@ public class UserDao {
 		return sessionFactory.getCurrentSession()
 			.createQuery("from User").list();
 	}
+	
+	public User getUser(String username) {
+		return (User) sessionFactory.getCurrentSession()
+			.createQuery("from User where username=?")
+			.setParameter(0, username)
+			.uniqueResult();
+	}
 }
